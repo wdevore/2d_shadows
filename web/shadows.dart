@@ -25,11 +25,18 @@ Element notes = querySelector("#fps");
 num fpsAverage;
 Element mousePosX = querySelector("#mousePosX");
 Element mousePosY = querySelector("#mousePosY");
-Element debug1 = querySelector("#debug1");
-Element debug2 = querySelector("#debug2");
-Element debug3 = querySelector("#debug3");
-Element testButton = querySelector("#testButton");
-InputElement txtTestCase = querySelector("#txtTestCase");
+
+final InputElement lightSegSlider = querySelector("#segSlider");
+Element lightSegs = querySelector("#lightSegs");
+final InputElement lightRadSlider = querySelector("#radSlider");
+Element lightRad = querySelector("#lightRad");
+final InputElement testSlider = querySelector("#testSlider");
+Element testCase = querySelector("#testCase");
+
+final InputElement showVertsChkBox = querySelector("#showVertices");
+final InputElement showLightRimChkBox = querySelector("#showLightRim");
+final InputElement showShadowedEdgesChkBox = querySelector("#showShadowedEdges");
+final InputElement drawCulledEdgesChkBox = querySelector("#drawCulledEdges");
 
 /// Display the animation's FPS in a div.
 void showFps(num fps) {
@@ -46,18 +53,6 @@ void showMousePos(Vector2 p) {
 void showMousePosByComponent(double x, double y) {
   mousePosX.text = "${x.toStringAsPrecision(8)}";
   mousePosY.text = "${y.toStringAsPrecision(8)}";
-}
-
-void showDebug1(String msg) {
-  debug1.text = msg;
-}
-
-void showDebug2(String msg) {
-  debug2.text = msg;
-}
-
-void showDebug3(String msg) {
-  debug3.text = msg;
 }
 
 class ShadowSweep {
@@ -79,8 +74,8 @@ class ShadowSweep {
   bool mouseOnLight = false;
 
   math.Random random = new math.Random(100);
-
-  LightSweep light = new LightSweep(100.0, 32);
+  
+  LightSweep light = new LightSweep();
 
   bool tmode = false;
 
@@ -113,11 +108,9 @@ class ShadowSweep {
     height = rect.height;
     canvas.width = width;
 
-    runTest(15);
+    light.segments = 16;
+    runTest(1);
 
-//    light.position = new Vector2(630.69992, 100.40002);
-//    light.position = new Vector2(590.69992, 100.40002);
-//    light.position = new Vector2(368.69992, 230.40002);
     light.position = new Vector2(334.69992, 313.40002);
 
     light.build(casters);
@@ -139,9 +132,14 @@ class ShadowSweep {
         (event) => canvasKeyUp(event)
         );
 
-    testButton.onClick.listen(
-        (event) => testButtonClick(event)
-        );
+    lightSegSlider.onChange.listen((e) => lightSegChanged(e));
+    lightRadSlider.onChange.listen((e) => lightRadChanged(e));
+    testSlider.onChange.listen((e) => testCaseChanged(e));
+    showVertsChkBox.onChange.listen((e) => showVertsChanged(e));
+    showLightRimChkBox.onChange.listen((e) => showLightRimChanged(e));
+    showShadowedEdgesChkBox.onChange.listen((e) => showShadowedEdgesChanged(e));
+    drawCulledEdgesChkBox.onChange.listen((e) => drawCulledEdgesChanged(e));
+    
     requestRedraw();
   }
 
@@ -163,9 +161,54 @@ class ShadowSweep {
     requestRedraw();
   }
 
-  void testButtonClick(MouseEvent event) {
-    int test = int.parse(txtTestCase.value);
+  void drawCulledEdgesChanged(event) {
+    if (drawCulledEdgesChkBox.checked) {
+      for(Polygon caster in casters)
+        caster.drawCulledEdges = true;
+    }
+    else
+      for(Polygon caster in casters)
+        caster.drawCulledEdges = false;
+  }
+
+  void showShadowedEdgesChanged(event) {
+    if (showShadowedEdgesChkBox.checked)
+      light.showShadowedEdgeSegs = true;
+    else
+      light.showShadowedEdgeSegs = false;    
+  }
+
+  void showLightRimChanged(event) {
+    if (showLightRimChkBox.checked)
+      light.showLightRim = true;
+    else
+      light.showLightRim = false;    
+  }
+
+  void showVertsChanged(event) {
+    if (showVertsChkBox.checked)
+      light.showVertices = true;
+    else
+      light.showVertices = false;    
+  }
+
+  void testCaseChanged(event) {
+    int test = int.parse(testSlider.value);
+    testCase.text = test.toString();
+    drawCulledEdgesChkBox.checked = false;
     runTest(test);
+  }
+
+  void lightSegChanged(event) {
+    int segs = int.parse(lightSegSlider.value);
+    light.segments = segs;
+    lightSegs.text = light.segments.toString();
+  }
+
+  void lightRadChanged(event) {
+    double rad = double.parse(lightRadSlider.value);
+    light.radius = rad;
+    lightRad.text = light.radius.toStringAsPrecision(4);
   }
 
   void canvasKeyUp(KeyboardEvent event) {
@@ -211,7 +254,6 @@ class ShadowSweep {
     }
     previousPointX = p.x.toDouble();
     previousPointY = p.y.toDouble();
-    showDebug1("${previousPointX}, ${previousPointY}");
     showMousePosByComponent(light.position.x, light.position.y);
   }
 

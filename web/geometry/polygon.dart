@@ -28,6 +28,9 @@ class Polygon {
   double _prevY;
   Vertex _prevVertex;
 
+  // debug stuff
+  bool drawCulledEdges = false;
+  
   // ----------------------------------------------------------
   // Factories
   // ----------------------------------------------------------
@@ -152,18 +155,20 @@ class Polygon {
       context.stroke();
     }
     
-    for(Edge edge in edgeList) {
-      if (edge.culled) {
-        context.strokeStyle = edge.culledColor;
-        Vertex v0 = vertices[edge.p0];
-        Vertex v1 = vertices[edge.p1];
-        context..beginPath()
-               ..moveTo(v0.vertex.x, v0.vertex.y)
-               ..lineTo(v1.vertex.x, v1.vertex.y)
-               ..stroke();
+    if (drawCulledEdges) {
+      for(Edge edge in edgeList) {
+        if (edge.culled) {
+          context.strokeStyle = edge.culledColor;
+          Vertex v0 = vertices[edge.p0];
+          Vertex v1 = vertices[edge.p1];
+          context..beginPath()
+                 ..moveTo(v0.vertex.x, v0.vertex.y)
+                 ..lineTo(v1.vertex.x, v1.vertex.y)
+                 ..stroke();
+        }
       }
     }
-
+    
     // Now draw normals.
     if (showNormals) {
       context.lineWidth = 2;

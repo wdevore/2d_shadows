@@ -29,9 +29,9 @@ class LightSweep {
   // ----------------------------------------------------------
   // Vars
   // ----------------------------------------------------------
-  final double radius;
-  final int segments;
-
+  double _radius;
+  int _segments;
+  
   double _theta_inc;
   final double TPI = 2.0 * math.PI;
 
@@ -63,11 +63,23 @@ class LightSweep {
   Vertex _vertex = new Vertex(0.0, 0.0);
 
   // Debug stuff
-
+  bool showVertices = false;
+  bool showLightRim = false;
+  bool showShadowedEdgeSegs = false;
+  
   // ----------------------------------------------------------
   // Factories
   // ----------------------------------------------------------
-  factory LightSweep(double radius, int segments) {
+  factory LightSweep() {
+    LightSweep l = new LightSweep._withRadiusSegments(100.0, 16);
+    l.color = "#646500";
+    l.selectRadius = l.radius / 10.0;
+    l.rim.showNormals = false;
+    l._theta_inc = 2.0 * math.PI / l.segments;
+    return l;
+  }
+  
+  factory LightSweep.withRadAndSegs(double radius, int segments) {
     LightSweep l = new LightSweep._withRadiusSegments(radius, segments);
     l.color = "#646500";
     l.selectRadius = radius / 10.0;
@@ -77,9 +89,25 @@ class LightSweep {
   }
 
   // ----------------------------------------------------------
+  // setter/getters
+  // ----------------------------------------------------------
+  int get segments => _segments;
+  void set segments(int segs) {
+    _segments = segs;
+    _theta_inc = 2.0 * math.PI / segments;
+    dirty = true;
+  }
+
+  double get radius => _radius;
+  void set radius(double rad) {
+    _radius = rad;
+    dirty = true;
+  }
+
+  // ----------------------------------------------------------
   // Constructors
   // ----------------------------------------------------------
-  LightSweep._withRadiusSegments(this.radius, this.segments);
+  LightSweep._withRadiusSegments(this._radius, this._segments);
 
   // ----------------------------------------------------------
   // Properties
@@ -672,7 +700,8 @@ class LightSweep {
 
   void draw(CanvasRenderingContext2D context) {
     // Draw rim first.
-    rim.draw(context);
+    if (showLightRim)
+      rim.draw(context);
 
     // Draw inner drag circle
     context..beginPath()
@@ -684,16 +713,18 @@ class LightSweep {
            ..stroke();
 
     // Draw cull and Trim Edges
-    context..lineWidth = 1
-           ..strokeStyle = "magenta";
-    for(Edge edge in _culledEdgeList) {
-      // Convert index to vertex
-      context..beginPath()
-             ..moveTo(edge.cP0.x, edge.cP0.y)
-             ..lineTo(edge.cP1.x, edge.cP1.y)
-             ..stroke();
+    if (showShadowedEdgeSegs) {
+      context..lineWidth = 1
+             ..strokeStyle = "magenta";
+      for(Edge edge in _culledEdgeList) {
+        // Convert index to vertex
+        context..beginPath()
+               ..moveTo(edge.cP0.x, edge.cP0.y)
+               ..lineTo(edge.cP1.x, edge.cP1.y)
+               ..stroke();
+      }
     }
-
+    
     // Draw light shadow rim
     if (_shadowVertices.length > 0) {
       context..lineWidth = 1
@@ -712,13 +743,14 @@ class LightSweep {
     }
 
     // Draw Rim vertices
-//    if (_shadowVertices.length > 0) {
-//      for(Vertex v in _shadowVertices) {
-//        context..fillStyle = '#ff0000'
-//               ..fillRect(v.vertex.x - 2.5, v.vertex.y - 2.5, 5, 5);
-//      }
-//    }
-
+    if (showVertices) {
+      if (_shadowVertices.length > 0) {
+        for(Vertex v in _shadowVertices) {
+          context..fillStyle = '#ff0000'
+                 ..fillRect(v.vertex.x - 2.5, v.vertex.y - 2.5, 5, 5);
+        }
+      }
+    }
   }
 
   bool isPointOnCenter(Point location) {

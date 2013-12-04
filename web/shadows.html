@@ -8,21 +8,25 @@
   </head>
   <body>
     <div class="mousePosStyle" >
-      Mouse:<span id="mousePosX">0</span>,<span id="mousePosY">0</span>
-      FPS: <span id="fps"></span>
+      Light:<span id="mousePosX">0</span>,<span id="mousePosY">0</span>
     </div>
 
     <p class="debugStyle" >
-      Debug1:&nbsp;<span id="debug1">0</span><br>
-      Debug2:&nbsp;<span id="debug2">0</span><br>
-      Debug3:&nbsp;<span id="debug3">0</span><br>
-      <input id="txtTestCase" type="text" value="1" />
-      <button id="testButton" name="button">Select</button>
+      <input id="segSlider" type="range" min="3" max="64" value="16" />Light segments:&nbsp;<span id="lightSegs">16</span><br>
+      <input id="radSlider" type="range" min="25.0" max="300.0" value="100.0" />Radius:&nbsp;<span id="lightRad">100.0</span><br>
+      <input id="testSlider" type="range" min="1" max="15" value="1" />Test case:&nbsp;<span id="testCase">1</span><br>
+    </p>
+    <p class="debugStyle" >
+      <input id="showVertices" type="checkbox" name="ShowVertices" /> Show Vertices<br>
+      <input id="showLightRim" type="checkbox" name="ShowLightRim" /> Show Light Rim<br>
+      <input id="showShadowedEdges" type="checkbox" name="Show Shadowed Edges" /> Show Shadowed Edges<br>
+      <input id="drawCulledEdges" type="checkbox" name="Draw Culled Edges" /> Draw Culled Edges<br>
     </p>
 
     <div class="container">
       <canvas id="area" width="1000px" height="500px"></canvas>
     </div>
+    FPS: <span id="fps"></span>
 
     <script type="application/dart" src="shadows.dart"></script>
     <script src="packages/browser/dart.js"></script>
