@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Shadows</title>
+    <link rel="stylesheet" href="shadows.css">
+  </head>
+  <body>
+    <div class="mousePosStyle" >
+      Mouse:<span id="mousePosX">0</span>,<span id="mousePosY">0</span>
+      FPS: <span id="fps"></span>
+    </div>
+
+    <p class="debugStyle" >
+      Debug1:&nbsp;<span id="debug1">0</span><br>
+      Debug2:&nbsp;<span id="debug2">0</span><br>
+      Debug3:&nbsp;<span id="debug3">0</span><br>
+      <input id="txtTestCase" type="text" value="1" />
+      <button id="testButton" name="button">Select</button>
+    </p>
+
+    <div class="container">
+      <canvas id="area" width="1000px" height="500px"></canvas>
+    </div>
+
+    <script type="application/dart" src="shadows.dart"></script>
+    <script src="packages/browser/dart.js"></script>
+  </body>
+</html>

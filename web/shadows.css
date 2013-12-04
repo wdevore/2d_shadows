@@ -1,0 +1,39 @@
+
+body {
+  background-color: #F8F8F8;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.2em;
+  margin: 10px;
+}
+
+h1, p {
+  color: #333;
+}
+
+#area {
+  position: relative;
+  background-color: black;
+}
+
+.container {
+  width: 1000px;
+  height: 500px;
+  position: relative;
+  border: 1px solid blue;
+  background-color: gray;
+}
+
+.mousePosStyle {
+  font-family: 'arial';
+  font-size: 20px;
+  font-weight: bold;
+  color: blue;
+}
+
+.debugStyle {
+  font-family: 'arial';
+  font-size: 20px;
+  color: green;
+}
