@@ -11,6 +11,7 @@ part 'geometry/utilities.dart';
 part 'geometry/polygon.dart';
 part 'geometry/vertex.dart';
 
+part 'affine_transform.dart';
 part 'shadowvertex.dart';
 part 'light.dart';
 part 'lightsweep.dart';
@@ -158,6 +159,61 @@ class ShadowSweep {
     light.build(casters);
     light.draw(context);
 
+//    context.save();
+//    AffineTransform I = new AffineTransform.Identity();
+//    context.setTransform(I.a, I.b, I.c, I.d, I.tx, I.ty);
+//
+//    double size = 100.0;
+//    Point base = new Point(100.0, 100.0);
+//    Point childTobase = new Point(100.0, 100.0);
+//    Point childToChild = new Point(100.0, 100.0);
+//    
+//    AffineTransform baseT = new AffineTransform.Identity();
+//    baseT.translate(base.x, base.y);
+//    //baseT.rotate(45.0 * 0.017453292519943295); // CW
+//    //print(baseT);
+//
+//    AffineTransform childTobaseT = new AffineTransform.Identity();
+//    childTobaseT.translate(childTobase.x, childTobase.y);
+//    childTobaseT.rotate(45.0 * 0.017453292519943295);
+//
+//    AffineTransform childToChildT = new AffineTransform.Identity();
+//    childToChildT.translate(childToChild.x, childToChild.y);
+//    childToChildT.rotate(45.0 * 0.017453292519943295);
+//
+//    context.transform(baseT.a, baseT.b, baseT.c, baseT.d, baseT.tx, baseT.ty);
+//    context..fillStyle = '#ff0000'
+//        ..fillRect(-(size/2), -(size/2), size, size);
+//
+//    context.transform(childTobaseT.a, childTobaseT.b, childTobaseT.c, childTobaseT.d, childTobaseT.tx, childTobaseT.ty);
+//    context..fillStyle = '#00ff00'
+//        ..fillRect(-(size/2), -(size/2), size, size);
+//
+//    context.transform(childToChildT.a, childToChildT.b, childToChildT.c, childToChildT.d, childToChildT.tx, childToChildT.ty);
+//    context..fillStyle = '#0000ff'
+//        ..fillRect(-(size/2), -(size/2), size, size);
+//
+//    context.restore();
+//
+//    context.save();
+//    context.strokeStyle = "white";
+//    context..beginPath()
+//      ..moveTo(0.0, 0.0)
+//      ..lineTo(100.0, 100.0)
+//      ..stroke();
+//    context.restore();
+
+//    context.save();
+//    context.strokeStyle = "yellow";
+//    
+//    context.rotate(45.0 * 0.017453292519943295); // CW
+//    context..beginPath()
+//           ..moveTo(0.0, 0.0)
+//           ..lineTo(200.0, 0.0)
+//           ..stroke();
+//
+//    context.restore();
+    
     requestRedraw();
   }
 
@@ -376,12 +432,12 @@ class ShadowSweep {
     poly.startEdgeWithDoubles(230.0, 190.0, 300.0, 190.0);
     casters.add(poly);
 
-    poly = new Polygon();
-    poly.name = "vert";
-    poly.active = true;
-    poly.begin();
-    poly.startEdgeWithDoubles(330.0, 190.0, 330.0, 250.0);
-    casters.add(poly);
+//    poly = new Polygon();
+//    poly.name = "vert";
+//    poly.active = true;
+//    poly.begin();
+//    poly.startEdgeWithDoubles(330.0, 190.0, 330.0, 250.0);
+//    casters.add(poly);
 
     poly.end();
   }

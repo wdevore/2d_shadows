@@ -3,6 +3,8 @@ part of shadows;
 double _S;
 double _T;
 
+const double EPSILON = 0.0000001192092896;
+
 double angleBetween(Vector2 a, Vector2 b) {
   a.normalize();
   b.normalize();
@@ -34,7 +36,8 @@ bool segmentIntersect(Vector2 A, Vector2 B,
                       Vector2 I)
 {
 
-  if( lineIntersect(A, B, C, D)
+  int intersect = lineIntersect(A, B, C, D);
+  if( intersect == 0
       && (_S >= 0.0 && _S <= 1.0 && _T >= 0.0 && _T <= 1.0) ) {
 
     // Point of intersection
@@ -47,13 +50,13 @@ bool segmentIntersect(Vector2 A, Vector2 B,
   return false;
 }
 
-bool lineIntersect(Vector2 A, Vector2 B,
+int lineIntersect(Vector2 A, Vector2 B,
                    Vector2 C, Vector2 D)
 {
     // FAIL: Line undefined
     if ( ((A.x == B.x) && (A.y == B.y)) || ((C.x == D.x) && (C.y == D.y)) )
     {
-        return false;
+        return 3;
     }
     double BAx = B.x - A.x;
     double BAy = B.y - A.y;
@@ -67,21 +70,19 @@ bool lineIntersect(Vector2 A, Vector2 B,
     _S = (DCx * ACy) - (DCy * ACx);
     _T = (BAx * ACy) - (BAy * ACx);
 
-    if (denom == 0)
-    {
-        if (_S == 0 || _T == 0)
-        {
+    if (denom.abs() < EPSILON) {
+        if (_S == 0 || _T == 0) {
             // Lines incident
-            return true;
+            return 1;
         }
         // Lines parallel and not incident
-        return false;
+        return 2;
     }
 
     _S = _S / denom;
     _T = _T / denom;
 
-    return true;
+    return 0;
 }
 
 double distanceBetweenByVector(Vector2 p0, Vector2 p1) {

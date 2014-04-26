@@ -219,7 +219,11 @@ class LightSweep {
 
               _setFacing(p0, p1, edgeList);
 
-              if (containsP0) {
+              if (!containsP0 && !containsP1) {
+                  // Neither end point is inside. Doing nothing
+                  // is the same as taking the rim vertex.
+              }
+              else if (containsP0) {
                 // contains p0. p1 was trimmed off and has now become "v". We need to capture
                 // p1's data and clone it to "v".
                 v.prevEdgeId = p1.prevEdgeId;
@@ -316,7 +320,16 @@ class LightSweep {
         // Process edge vertices until an edge's radial exceeds the current nextAngle.
         if (culledVertex.radialPos < nextAngle) {
           // Process a Rim vertex first before group of edge vertices.
-          _handleRimVertex(angle);
+          // This rim vertex could be co-incident with a caster edge
+          // which means the rim vertex is also the same as the 
+          // edge intersect with the rim. We should only consider one
+          // of them.
+          // So we compare the angles of the current culled edge vertex
+          // and the current rim angle. If they are within an EPSILON
+          // then they are considered co-incident (aka on top of each other.)
+          bool coincident = (culledVertex.radialPos - angle).abs() < EPSILON;
+          if (!coincident)
+            _handleRimVertex(angle);
           do {
             if (culledVertex.radialPos > nextAngle) {
               break;
@@ -472,7 +485,11 @@ class LightSweep {
 
     bool vertexOccluded = false;
 
-    double vertexToLightDistance = distanceBetweenByVector(position, vertex.vertex);
+    // This distance will equal the light radius if the vertex.type = Rim
+    // so we can skip the calculation.
+    double vertexToLightDistance = _radius;
+    if (vertex.type != Vertex.RIM)
+      vertexToLightDistance = distanceBetweenByVector(position, vertex.vertex);
 
     double currentDistance = double.MAX_FINITE;
     bool intersectionOccurred = false;
@@ -684,6 +701,14 @@ class LightSweep {
       // If we found an intersect then there may be another intersect.
     } while (intersectCount < 2 && moreEdges);
 
+    // If two intersects are found we "collapse" them to one if they
+    // are within an epsilon of each other.
+    if (intersectCount > 1) {
+        double distance = distanceBetweenByVector(intersect1, intersect2);
+        if (distance < EPSILON)
+            intersectCount = 1;
+    }
+    
     return intersectCount;
   }
 
