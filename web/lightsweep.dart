@@ -327,9 +327,11 @@ class LightSweep {
           // So we compare the angles of the current culled edge vertex
           // and the current rim angle. If they are within an EPSILON
           // then they are considered co-incident (aka on top of each other.)
+          // We need to keep only one (as long as both are not occluded).
           bool coincident = (culledVertex.radialPos - angle).abs() < EPSILON;
           if (!coincident)
             _handleRimVertex(angle);
+          
           do {
             if (culledVertex.radialPos > nextAngle) {
               break;
@@ -345,8 +347,17 @@ class LightSweep {
             // "group" may have been occluded. But if just 1 vertex was
             // processed then we don' want to add a trailing Rim vertex
             // Because it will be picked on the next loop.
-            if (!occluded)
-              processedEdgeVertex = true; // track that a vertex was added
+            if (!occluded) {
+                // This vertex wasn't occluded.
+                processedEdgeVertex = true; // track that a vertex was added
+            }
+            else {
+                // Vertex was occluded which means it wasn't added.
+                // But we still need a vertex if possible. So we take
+                // A look at the rim vertex again.
+                if (coincident)
+                    _handleRimVertex(angle);
+            }
 
             moreVertices = itr.moveNext();
             culledVertex = itr.current;
